@@ -42,7 +42,43 @@ branching_model   = "feat/, fix/, chore/*"
 
 # Scratchpad
 
-## Current Task: Roam Component Massive Simplification
+## Current Task: Fix Vercel Deployment Issues
+
+### Task Analysis
+The user reports that the backend is unresponsive and no response to API calls when deployed on Vercel. Both frontend and backend need to work.
+
+### Issues Identified:
+[ ] 1. Vercel configuration issues:
+   - Python runtime version mismatch (3.9 vs 3.11+)
+   - Missing ASGI adapter for FastAPI
+   - Incorrect route configuration
+   - Missing environment variables
+
+[ ] 2. Backend deployment issues:
+   - FastAPI needs ASGI adapter for serverless
+   - Missing mangum adapter
+   - Environment variables not configured
+   - CORS origins need to include Vercel domain
+
+[ ] 3. Frontend deployment issues:
+   - API endpoint configuration
+   - Build configuration
+
+### Plan:
+[ ] 1. Fix Vercel configuration (vercel.json)
+[ ] 2. Add ASGI adapter to backend (mangum)
+[ ] 3. Update CORS origins for production
+[ ] 4. Fix Python runtime version
+[ ] 5. Test deployment
+[ ] 6. Update frontend API configuration
+
+### Files to Modify:
+- vercel.json
+- backend/main.py
+- backend/requirements.txt
+- frontend/src/api.js (if needed)
+
+## Previous Task: Roam Component Massive Simplification
 
 ### Task Analysis
 The user requested to completely restart and massively simplify the roam component to:

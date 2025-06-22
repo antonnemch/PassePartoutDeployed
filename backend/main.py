@@ -33,7 +33,14 @@ app = FastAPI(
 # Setup CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://localhost:5173",
+        "https://*.vercel.app",
+        "https://*.vercel.dev",
+        "https://passepartout-deployed.vercel.app",
+        "https://passepartout-deployed-git-main-akshatkulshreshtha.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,10 +57,18 @@ roam_service = RoamService()
 
 @app.get("/")
 def read_root():
+    """Root endpoint for health check and API info"""
     return {
         "message": "EarSightAI Backend running!",
         "version": "1.0.0",
-        "endpoints": {"generate_route": "POST /generate-route", "roam": "POST /roam"},
+        "endpoints": {
+            "generate_route": "POST /generate-route", 
+            "roam": "POST /roam",
+            "weather": "GET /weather",
+            "health": "GET /health"
+        },
+        "timestamp": datetime.now().isoformat(),
+        "environment": os.getenv("VERCEL_ENV", "development")
     }
 
 

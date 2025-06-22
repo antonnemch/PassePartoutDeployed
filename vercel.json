@@ -6,21 +6,38 @@
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "15mb",
-        "runtime": "python3.9"
+        "runtime": "python3.11"
       }
     },
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "workPath": "frontend"
+        "workPath": "frontend",
+        "distDir": "build"
       }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/main.py"
+      "dest": "/backend/main.py"
+    },
+    {
+      "src": "/health",
+      "dest": "/backend/main.py"
+    },
+    {
+      "src": "/generate-route",
+      "dest": "/backend/main.py"
+    },
+    {
+      "src": "/roam",
+      "dest": "/backend/main.py"
+    },
+    {
+      "src": "/weather",
+      "dest": "/backend/main.py"
     },
     {
       "handle": "filesystem"

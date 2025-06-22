@@ -3,6 +3,7 @@ import MapComponent from "./MapComponent";
 import TextBox from "./TextBox";
 import ChatWindow from "./ChatWindow";
 import WeatherComponent from "./WeatherComp";
+import { generateRoute, getWeather } from './api';
 
 const calculateCalories = (distanceKm, durationMinutes, userWeightKg = 70) => {
     // Average walking speed: 5 km/h (moderate pace)
@@ -43,12 +44,7 @@ export default function MainPage({ currentLocation }) {
     console.log("Submitting to AI:", inputText);
 
     try {
-      const response = await fetch("http://localhost:8000/generate-route", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input_text: inputText })
-      });
-      const data = await response.json();
+      const data = await generateRoute(inputText);
       // console.log(data);
       if (data.is_route_response) {
         setRouteData(data);
@@ -74,18 +70,8 @@ export default function MainPage({ currentLocation }) {
   const fetchWeatherData = async (lat, lng) => {
     setWeatherLoading(true);
     try {
-      const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY || '429786abfd1c8dc244cd9c6eecd024bc';
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${API_KEY}&units=metric`
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setWeatherData(data);
-      } else {
-        console.error('Failed to fetch weather data');
-        setWeatherData(null);
-      }
+      const data = await getWeather(lat, lng);
+      setWeatherData(data);
     } catch (error) {
       console.error('Error fetching weather:', error);
       setWeatherData(null);
