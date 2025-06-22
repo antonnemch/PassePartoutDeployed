@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from geojson import Feature, FeatureCollection, LineString, Point
+import requests
 
 # Import our modules
 from models import RoamRequest, RoamResponse, RoutePoint, RouteRequest, RouteResponse
@@ -161,13 +162,19 @@ async def generate_route(request: RouteRequest):
                     duration_from_prev=duration_from_prev,
                 )
             else:
-                # POI - always generate AI script, no fallback
+                # POI - use fallback script to avoid rate limits
                 poi = pois[idx - 1]
-                try:
-                    script = script_generator.generate_script(poi, context=context)
-                except Exception as e:
-                    print(f"AI script generation failed for {poi['name']}: {e}")
-                    script = "[AI script unavailable]"
+
+                # Only generate AI script for the first 3 POIs to avoid rate limits
+                if i <= 3:
+                    try:
+                        script = script_generator.generate_script(poi, context=context)
+                    except Exception as e:
+                        print(f"Using fallback script for {poi['name']}: {e}")
+                        script = f"Welcome to {poi['name']}! This is a great spot to explore and discover what makes Toronto special."
+                else:
+                    # Use simple fallback script for remaining POIs
+                    script = f"Here's {poi['name']}, another interesting location on your walking tour of Toronto."
 
                 point = RoutePoint(
                     name=poi["name"],
@@ -228,6 +235,22 @@ async def generate_route(request: RouteRequest):
     except Exception as e:
         print(f"Error generating route: {e}")
         raise HTTPException(status_code=500, detail=f"Error generating route: {str(e)}")
+
+
+@app.get("/weather")
+async def get_weather(lat: float, lon: float):
+    """
+    Get weather data from OpenWeatherMap
+    """
+    api_key = os.getenv("OPENWEATHER_API_KEY", "429786abfd1c8dc244cd9c6eecd024bc")
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching weather data: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching weather data")
 
 
 def create_geojson(points: list[RoutePoint], route_details: dict) -> dict:
