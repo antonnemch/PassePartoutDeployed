@@ -125,7 +125,7 @@ export default function MainPage({ currentLocation, setCurrentLocation }) {
     console.log("Submitting AI request:", inputText);
 
     try {
-      const response = await fetch("http://localhost:8000/generate-route", {
+      const response = await fetch("https://passepartout-1.onrender.com/generate-route", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ input_text: inputText, context: chatHistory })
