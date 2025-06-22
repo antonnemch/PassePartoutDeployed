@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "backend/main.py": {
+      "runtime": "python3.11"
+    }
+  },
   "builds": [
     {
       "src": "backend/main.py",
@@ -40,11 +45,15 @@
       "dest": "/backend/main.py"
     },
     {
+      "src": "/",
+      "dest": "/backend/main.py"
+    },
+    {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/frontend/index.html"
     }
   ]
 } 

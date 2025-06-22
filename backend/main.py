@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from geojson import Feature, FeatureCollection, LineString, Point
 import requests
+from mangum import Mangum
 
 # Import our modules
 from models import RoamRequest, RoamResponse, RoutePoint, RouteRequest, RouteResponse
@@ -384,9 +385,12 @@ async def clear_roam_cache():
 
 @app.get("/health")
 def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+    """Health check endpoint for monitoring"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "environment": os.getenv("VERCEL_ENV", "development")
+    }
 
-
-from mangum import Mangum
+# Add mangum handler for serverless deployment
 handler = Mangum(app)
