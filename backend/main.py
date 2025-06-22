@@ -371,3 +371,7 @@ async def clear_roam_cache():
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+
+from mangum import Mangum
+handler = Mangum(app)
